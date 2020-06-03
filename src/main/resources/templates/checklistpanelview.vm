@@ -1,0 +1,13 @@
+#if($issuetype==10000)
+<div class="line" id="hr"><hr></div>
+
+<form action="/jira/rest/test-rest/1.0/test-api/post4" id="form" method="post">
+    <label><input class="checkbox" type="checkbox" name="id1" value="checked" id="id1" onchange='fun1("id1")'/>gfsd</label><br>
+    <label><input class="checkbox" type="checkbox" name="id2" value="checked" id="id2" onchange="fun1('id2')"/>dfgh</label><br>
+    <label><input class="checkbox" type="checkbox" name="id3" value="checked" id="id3" onchange="fun1('id3')"/>dfgh</label><br>
+    <label><input class="checkbox" type="checkbox" name="id4" value="checked" id="id4" onchange="fun1('id4')"/>dfgh</label><br>
+    <input type="submit" value="Отправить">
+</form>
+#else
+<div>There is no checklist for this type of issue</div>
+#end
