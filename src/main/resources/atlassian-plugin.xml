@@ -1,0 +1,63 @@
+<atlassian-plugin key="${atlassian.plugin.key}" name="${project.name}" plugins-version="2">
+    <plugin-info>
+        <description>${project.description}</description>
+        <version>${project.version}</version>
+        <vendor name="${project.organization.name}" url="${project.organization.url}" />
+        <param name="plugin-icon">images/pluginIcon.png</param>
+        <param name="plugin-logo">images/pluginLogo.png</param>
+    </plugin-info>
+
+    <!-- add our i18n resource -->
+    <resource type="i18n" name="i18n" location="ao-tutorial"/>
+    
+    <!-- add our web resources -->
+    <web-resource key="ao-tutorial-resources" name="ao-tutorial Web Resources">
+        <dependency>com.atlassian.auiplugin:ajs</dependency>
+        
+        <resource type="download" name="ao-tutorial.css" location="/css/ao-tutorial.css"/>
+        <resource type="download" name="ao-tutorial.js" location="/js/ao-tutorial.js"/>
+        <resource type="download" name="images/" location="/images"/>
+
+        <context>ao-tutorial</context>
+    </web-resource>
+
+    <web-panel name="CheckListPan" i18n-name-key="check-list-panel.name" key="check-list-pan" location="atl.jira.view.issue.left.context" weight="1000">
+        <description key="check-list-panel.description">The CheckListPanel Plugin</description>
+        <context-provider class="com.atlassian.tutorial.ao.todo.CheckListPanel"/>
+        <label key="check-list-panel.title"/>
+        <resource type="velocity"
+                  name="view"
+                  location="templates/checklistpanelview.vm"/>
+        <resource type="velocity"
+                  name="edit"
+                  location="templates/checklistpaneledit.vm"/>
+    </web-panel>
+
+
+    <web-section key="admin_spz_config_section"
+                 name="admin_spz_config_section"
+                 location="admin_plugins_menu"
+                 weight="20"
+                 i18n-name-key="admin-spz-config.section.name">
+        <label key="admin-spz-config.section.name"/>
+    </web-section>
+
+    <web-item key="todo-admin-webitem"
+              name="todo-admin-webitem.name"
+              section="admin_plugins_menu/admin_spz_config_section"
+              weight="40">
+        <label key="todo-admin-webitem.label"/>
+        <link linkId="todo-admin-webitem-link">/plugins/servlet/todo/list</link>
+    </web-item>
+
+    <ao key="ao-module">
+        <description>The module configuring the Active Objects service used by this plugin</description>
+        <entity>com.atlassian.tutorial.ao.todo.Todo</entity>
+    </ao>
+
+    <servlet name="Todo List Add Servlet" class="com.atlassian.tutorial.ao.todo.TodoServlet" key="todo-list">
+        <description>A servlet to add and list todos</description>
+        <url-pattern>/todo/list</url-pattern>
+    </servlet>
+    
+</atlassian-plugin>
