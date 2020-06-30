@@ -1,30 +1,25 @@
 package com.atlassian.tutorial.ao.todo;
 
-import com.atlassian.activeobjects.external.ActiveObjects;
-import com.atlassian.plugin.spring.scanner.annotation.component.Scanned;
-import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
-import com.atlassian.sal.api.transaction.TransactionCallback;
-
-import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import static com.google.common.base.Preconditions.*;
 
-@Scanned
 public final class TodoServlet extends HttpServlet
 {
-    @ComponentImport
-    private final ActiveObjects ao;
+    private final TodoService todoService;
 
-    @Inject
-    public TodoServlet(ActiveObjects ao)
+    public TodoServlet(TodoService todoService)
     {
-        this.ao = checkNotNull(ao);
+        this.todoService = checkNotNull(todoService);
     }
 
     @Override
@@ -42,27 +37,44 @@ public final class TodoServlet extends HttpServlet
 
         // the form to post more TODOs
         w.write("<form method=\"post\">");
-        w.write("<input type=\"text\" name=\"task\" size=\"25\"/>");
+        w.write("<label>Тип проекта<input type=\"text\" name=\"projecttype\" size=\"25\"/></label>");
+        w.write("  ");
+        w.write("<br>");
+        w.write("<label>Тип задачи<input type=\"text\" name=\"issuetype\" size=\"25\"/></label>");
+        w.write("  ");
+        w.write("<br>");
+        w.write("<label>1.<input type=\"text\" name=\"task1\" size=\"25\"/></label>");
+        w.write("  ");
+        w.write("<br>");
+        w.write("<label>2.<input type=\"text\" name=\"task2\" size=\"25\"/></label>");
+        w.write("  ");
+        w.write("<br>");
+        w.write("<label>3.<input type=\"text\" name=\"task3\" size=\"25\"/></label>");
         w.write("  ");
         w.write("<input type=\"submit\" name=\"submit\" value=\"Add\"/>");
         w.write("</form>");
 
-        w.write("<ol>");
 
-        ao.executeInTransaction(new TransactionCallback<Void>() // (1)
-        {
-            @Override
-            public Void doInTransaction()
-            {
-                for (Todo todo : ao.find(Todo.class)) // (2)
-                {
+
+        Set<String> issuetypes = new HashSet<>();
+        for (Todo todo: todoService.todotest()) {
+            issuetypes.add(todo.getIssueType());
+        }
+
+        for (String s:issuetypes) {
+            w.print(s);
+            w.print("------------------------------------------");
+            w.write("<ol>");
+            for (Todo todo : todoService.todoofthisissuetype(s)) {
+                if (todo.getIssueCode()=="test") {
                     w.printf("<li><%2$s> %s </%2$s></li>", todo.getDescription(), todo.isComplete() ? "strike" : "strong");
                 }
-                return null;
             }
-        });
+            w.write("</ol>");
+        }
 
-        w.write("</ol>");
+
+
         w.write("<script language='javascript'>document.forms[0].elements[0].focus();</script>");
         w.write("</body>");
         w.write("</html>");
@@ -72,19 +84,14 @@ public final class TodoServlet extends HttpServlet
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException
     {
-        final String description = req.getParameter("task");
-        ao.executeInTransaction(new TransactionCallback<Todo>() // (1)
-        {
-            @Override
-            public Todo doInTransaction()
-            {
-                final Todo todo = ao.create(Todo.class); // (2)
-                todo.setDescription(description); // (3)
-                todo.setComplete(false);
-                todo.save(); // (4)
-                return todo;
-            }
-        });
+        final String description1 = req.getParameter("task1");
+        final String description2 = req.getParameter("task2");
+        final String description3 = req.getParameter("task3");
+        final String issuetype = req.getParameter("issuetype");
+        final String projecttype = req.getParameter("projecttype");
+        todoService.add(description1, issuetype, projecttype, "test");
+        todoService.add(description2, issuetype, projecttype, "test");
+        todoService.add(description3, issuetype, projecttype, "test");
         res.sendRedirect(req.getContextPath() + "/plugins/servlet/todo/list");
     }
 }

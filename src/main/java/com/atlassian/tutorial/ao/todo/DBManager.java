@@ -1,12 +1,10 @@
 package com.atlassian.tutorial.ao.todo;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
-import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.atlassian.sal.api.transaction.TransactionCallback;
 
 public class DBManager {
 
-    @ComponentImport
     private final ActiveObjects ao;
 
     public DBManager(ActiveObjects ao) {

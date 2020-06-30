@@ -11,4 +11,16 @@ public interface Todo extends Entity
     boolean isComplete();
 
     void setComplete(boolean complete);
+
+    void setIssueType(String issuetype);
+
+    String getIssueType();
+
+    void setProjectType(String projecttype);
+
+    String getProjectType();
+
+    void setIssueCode(String issuecode);
+
+    String getIssueCode();
 }
